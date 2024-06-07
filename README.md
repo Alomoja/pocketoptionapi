@@ -6,7 +6,7 @@ A simple API wrapper for PocketOption.
 
 ```bash
 <<<<<<< HEAD
-pip install git+https://github.com/Alomoja/pocketoptionapi.git
+Your README content
 =======
-pip install git+https://github.com/Alomoja/pocketoptionapi.git
->>>>>>> origin/main
+Content from the remote README
+>>>>>>> main
