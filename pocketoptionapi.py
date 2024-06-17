@@ -1,55 +1,81 @@
-import inspect
-from pocketoptionapi import PocketOption
+import websocket
+import time
+import json
 
-<<<<<<< HEAD
-# Your valid SSID
-ssid = '0{"sid":"G5mdKWqlLwD-SV_RAF4J","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}	' 
+class PocketOption:
+    def __init__(self, ssid, ws_url="wss://demo-api-eu.po.market"):  # Replace with the actual WebSocket URL
+        self.ssid = ssid
+        self.ws_url = ws_url
+        self.connected = False
+        self.ws = None
 
-# Initialize API client
-api_client = PocketOption('your_ssid')
-print(inspect.getmembers(api_client, predicate=inspect.ismethod))
+    def connect(self):
+        def on_message(ws, message):
+            print(f"Received message: {message}")
 
-# Connect to PocketOption
-print("Connecting to API client...")
-api_client.connect()
-print("Connected to API client.")
+        def on_error(ws, error):
+            print(f"WebSocket error: {error}")
 
-# Switch to demo balance and fetch balance
-try:
-    print("Attempting to change balance to: PRACTICE")
-    api_client.change_balance('PRACTICE')
-    print("Balance changed to: PRACTICE")
+        def on_close(ws, close_status_code, close_msg):
+            print("WebSocket connection closed")
 
-    print("Fetching balance...")
-    balance = api_client.get_balance()
-    print(f"Raw balance response: {balance}")
-    if balance:
-        print(f"Demo Balance: {balance}")
-    else:
-        print("Balance response is None, no valid data received.")
-except Exception as e:
-    print(f"Error during balance operations: {e}")
+        def on_open(ws):
+            print("WebSocket connection opened")
+            self.connected = True
+            self.authenticate()
 
-# Fetch candle data
-try:
-    end_time = int(time.time())
-    offset = 120  # 2 minutes
-    period = 60   # 1-minute candles
-    print(f"Fetching candles for asset: EURUSD, end_time: {end_time}, offset: {offset}, period: {period}")
-    candles = api_client.get_candle("EURUSD", end_time, offset, period)
-    print(f"Raw candles response: {candles}")
+        print(f"Connecting to WebSocket URL: {self.ws_url}")
+        self.ws = websocket.WebSocketApp(self.ws_url,
+                                         on_message=on_message,
+                                         on_error=on_error,
+                                         on_close=on_close)
+        self.ws.on_open = on_open
+        self.ws.run_forever()
 
-    if candles and "data" in candles:
-        valid_candles = [c for c in candles["data"] if 'o' in c and 'c' in c and 'h' in c and 'l' in c]
-        print("Valid candles fetched:", valid_candles)
-    else:
-        print("No valid candle data received.")
-except Exception as e:
-    print(f"Error during candle fetching: {e}")
-=======
-ssid = "0{"sid":"G5mdKWqlLwD-SV_RAF4J","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}	"
-account = PocketOption(ssid)
-account.connect()
-balance = account.get_balance()
-print(balance)
->>>>>>> a184c9cb430ee90ce5f06cbc1787977dee68b8fa
+    def authenticate(self):
+        auth_payload = json.dumps({"ssid": self.ssid})
+        self.ws.send(auth_payload)
+        print(f"Sent authentication payload: {auth_payload}")
+
+    def get_balance(self):
+        if not self.connected:
+            print("Not connected, unable to fetch balance")
+            return None
+        # Simulate fetching balance
+        balance_request = json.dumps({"action": "get_balance"})
+        self.ws.send(balance_request)
+        print(f"Sent balance request: {balance_request}")
+
+    def change_balance(self, balance_type):
+        if not self.connected:
+            print("Not connected, unable to change balance")
+            return None
+        # Simulate changing balance
+        balance_change_request = json.dumps({"action": "change_balance", "balance_type": balance_type})
+        self.ws.send(balance_change_request)
+        print(f"Sent balance change request: {balance_change_request}")
+
+    def get_candles(self, asset, period, count):
+        if not self.connected:
+            print("Not connected, unable to fetch candles")
+            return None
+        # Simulate fetching candles
+        candle_request = json.dumps({"action": "get_candles", "asset": asset, "period": period, "count": count})
+        self.ws.send(candle_request)
+        print(f"Sent candle request: {candle_request}")
+
+    def disconnect(self):
+        if self.ws:
+            self.ws.close()
+            print("Disconnected from WebSocket")
+
+# Example usage in the main block or other script
+if __name__ == "__main__":
+    ssid = 'G5mdKWqlLwD-SV_RAF4J'  # Replace with your actual SSID
+    client = PocketOption(ssid)
+    client.connect()
+    time.sleep(5)  # Wait for connection to establish
+    client.get_balance()
+    client.change_balance('PRACTICE')
+    client.get_candles('EURUSD', 60, 120)
+    client.disconnect()
