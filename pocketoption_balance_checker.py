@@ -3,7 +3,7 @@ from pocketoptionapi import PocketOption
 
 # Sample WebSocket messages
 ws_messages = [
-    '0{"sid":"Oiri0O_zQMWfnyVuGA86","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}'
+    '0{"sid":"G5mdKWqlLwD-SV_RAF4J","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}	'
 ]
 
 # Function to extract the sid value
