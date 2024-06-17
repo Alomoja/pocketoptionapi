@@ -19,7 +19,7 @@ class PocketOption
   def get_balance
     # Implement the logic to fetch balance here
     # For this example, let's assume a simulated balance
-    simulated_balance = 1000.0
+    simulated_balance = 10000.0
     simulated_balance
   end
 end
