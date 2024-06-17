@@ -3,7 +3,11 @@ require_relative 'pocketoption_api'
 
 # Sample WebSocket messages
 ws_messages = [
+<<<<<<< HEAD
+  '0{"sid":"G5mdKWqlLwD-SV_RAF4J","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}'
+=======
   '0{"sid":"G5mdKWqlLwD-SV_RAF4J","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}	'
+>>>>>>> a184c9cb430ee90ce5f06cbc1787977dee68b8fa
 ]
 
 # Function to extract the sid value
